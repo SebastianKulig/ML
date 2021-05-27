@@ -1,45 +1,33 @@
 import os
-import shutil
-from os import listdir
-from os.path import isfile, join
-
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
+from shutil import copyfile
 import numpy as np
-from keras.applications.resnet50 import ResNet50
-from keras.applications.vgg16 import VGG16
-from keras.applications.vgg16 import preprocess_input
-from keras.models import Model
-from keras.preprocessing import image
-from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_samples, silhouette_score
+import matplotlib.pyplot as plt
 
 from sklearn.neighbors import NearestNeighbors
 from sklearn.cluster import DBSCAN, OPTICS, KMeans
 from sklearn.neighbors import KNeighborsClassifier
-from matplotlib import pyplot as plt
-import sklearn
+
 from keras.preprocessing.image import load_img
-from keras.preprocessing.image import img_to_array
+from keras.applications.vgg16 import VGG16
+from keras.applications.resnet50 import ResNet50
 from keras.applications.vgg16 import preprocess_input
 from keras.applications.inception_v3 import InceptionV3
 
-# models
-from keras.applications.vgg16 import VGG16
+from keras.preprocessing.image import img_to_array
 from keras.models import Model
-
-# for everything else
-import os
-
+from keras.preprocessing import image
+from sklearn.metrics import silhouette_samples, silhouette_score
+import matplotlib.cm as cm
+import sklearn
+import shutil
+from os import listdir
+from os.path import isfile, join
+from keras.models import Model
 import pickle
-
-from shutil import copyfile
-
 from pathlib import Path
 
 
 def begin(selected_method, selected_model, selected_dataset):
-
     os.chdir(selected_dataset)
 
     images = []
