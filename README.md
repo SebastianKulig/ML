@@ -1,10 +1,11 @@
 # Uruchamianie
 
 1. Sklonować repozytorium.
-2. Odpowiedni dataset wstawić do jednego z katalogów w ./datasets/ (same obrazki, bez podkatalogów)
-3. Przejść do ./scripts
-4. ```python launcher.py```
-5. Reszta zgodnie z komunikatami z programu
+2. `pip install -r requirements.txt`
+3. Odpowiedni dataset wstawić do jednego z katalogów w ./datasets/ (same obrazki, bez podkatalogów)
+4. Przejść do ./scripts
+5. ```python launcher.py```
+6. Reszta zgodnie z komunikatami z programu
 
 
 # TODO - wpisujcie się do zadań które robicie, żeby nie duplikować pracy
