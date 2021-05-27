@@ -108,10 +108,10 @@ def cluster_data(feat, filenames, out_path, path, user_model):
         else:
             groups[cluster].append(file)
         try:
-            copyfile(path + Path("/") + str(file), out_path + Path("/") + str(cluster) + Path("/") + str(file))
+            copyfile(path + '/' + str(file), out_path + '/' + str(cluster) + '/' + str(file))
         except:
-            os.mkdir(out_path + Path("/") + str(cluster))
-            copyfile(path + Path("/") + str(file), out_path + Path("/") + str(cluster) + Path("/") + str(file))
+            os.mkdir(out_path + '/' + str(cluster))
+            copyfile(path + '/' + str(file), out_path + '/' + str(cluster) + '/' + str(file))
 
 
 def neighbors_plot(feat, out_path):
@@ -125,9 +125,9 @@ def neighbors_plot(feat, out_path):
     plt.xlabel('sample number')
     plt.ylabel('distance to the neighbor')
     plt.title('sorted distances between points')
-    plt.savefig(out_path + Path("/") + 'neighbor.png')
+    plt.savefig(out_path + '/' + 'neighbor.png')
     plt.show()
-    print('plot saved to {}'.format(out_path + Path("/") + 'neighbor.png'))
+    print('plot saved to {}'.format(out_path + '/' + 'neighbor.png'))
 
 
 def extract_features(file, model):

@@ -1,9 +1,13 @@
+# Chudy additions
+scripts/__pycache__/
+datasets/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 .idea/
 *.py[cod]
 *$py.class
-scripts/__pycache__/
+
 # C extensions
 *.so
 
