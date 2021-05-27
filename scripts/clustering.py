@@ -27,7 +27,7 @@ import pickle
 from pathlib import Path
 
 
-def begin(selected_method, selected_model, selected_dataset):
+def begin(selected_method, selected_model, selected_dataset, local_os):
     os.chdir(selected_dataset)
 
     images = []
@@ -71,16 +71,17 @@ def begin(selected_method, selected_model, selected_dataset):
     if selected_method == 'DBSCAN':
         image_path = '../../'
         image_path = os.path.abspath(image_path)
-        neighbors_plot(feat, image_path)
+        neighbors_plot(feat, image_path, local_os)
 
     out_path = '../../results/{}/'.format(selected_model)
     out_path = os.path.abspath(out_path)
 
     print('clustering data')
-    cluster_data(feat, filenames, out_path, selected_dataset, selected_method)
+    cluster_data(feat, filenames, out_path, selected_dataset, selected_method, local_os)
 
 
-def cluster_data(feat, filenames, out_path, path, user_model):
+def cluster_data(feat, filenames, out_path, path, user_model, local_os):
+    slash = '/' if local_os == 'Unix' else '\\'
     if user_model == 'DBSCAN':
         eps = float(input('max distance to the neighbor: '))
         min_samples = int(input('number of points to be considered core point:'))
@@ -107,16 +108,15 @@ def cluster_data(feat, filenames, out_path, path, user_model):
             groups[cluster].append(file)
         else:
             groups[cluster].append(file)
-
         try:
-
-            copyfile(path + "\\" + str(file), out_path + "\\" + str(cluster) + "\\" + str(file))
+            copyfile(path + slash + str(file), out_path + slash + str(cluster) + slash + str(file))
         except:
-            os.mkdir(out_path + "\\" + str(cluster))
-            copyfile(path + "\\" + str(file), out_path + "\\" + str(cluster) + "\\" + str(file))
+            os.mkdir(out_path + slash + str(cluster))
+            copyfile(path + slash + str(file), out_path + slash + str(cluster) + slash + str(file))
 
 
-def neighbors_plot(feat, out_path):
+def neighbors_plot(feat, out_path, local_os):
+    slash = '/' if local_os == 'Unix' else '\\'
     print('calculating distances')
     neigh = NearestNeighbors(n_neighbors=2)
     nbrs = neigh.fit(feat)
@@ -129,7 +129,7 @@ def neighbors_plot(feat, out_path):
     plt.title('sorted distances between points')
     plt.savefig(out_path + '\\neighbor.png')
     plt.show()
-    print('plot saved to {}'.format(out_path + '\\neighbor.png'))
+    print('plot saved to {}'.format(out_path + slash + 'neighbor.png'))
 
 
 def extract_features(file, model):

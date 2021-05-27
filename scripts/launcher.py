@@ -58,7 +58,7 @@ def launch_clustering(cluster_type, path, model):
 def main():
     user_choices = user_input()
     dataset_path = translate_dataset_path(user_choices['dataset'], user_choices['local_os'])
-    clustering.begin(user_choices['cluster_method'], user_choices['model'], dataset_path)
+    clustering.begin(user_choices['cluster_method'], user_choices['model'], dataset_path, user_choices['local_os'])
 
 
 if __name__ == '__main__':
