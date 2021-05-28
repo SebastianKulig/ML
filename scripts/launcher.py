@@ -1,7 +1,8 @@
-import inquirer
-import clustering
 import os
 from pathlib import Path
+
+import clustering
+import inquirer
 
 
 def user_input():
@@ -42,12 +43,6 @@ def translate_dataset_path(user_friendly_name):
 
     exact_path = os.path.abspath(exact_path)
     return exact_path
-
-
-def launch_clustering(cluster_type, path, model):
-    print('chosen clustering method: {}\nchosen model: {}\ndataset location: {}'.format(cluster_type,
-                                                                                        model,
-                                                                                        path))
 
 
 def main():
