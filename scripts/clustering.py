@@ -60,6 +60,7 @@ def begin(selected_method, selected_model, selected_dataset):
 
     pp.print_green('########## clustering done in {} seconds'.format(time.time() - start_time))
 
+
 def cluster_data(feat, filenames, results_path, input_path, user_model):
     if user_model == 'DBSCAN':
         # TODO DBSCAN that returns clustering method object used to call method.fit(images)

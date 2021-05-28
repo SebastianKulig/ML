@@ -1,6 +1,7 @@
 import inquirer
 import clustering
 import os
+from pathlib import Path
 
 
 def user_input():
@@ -31,13 +32,13 @@ def user_input():
 
 def translate_dataset_path(user_friendly_name):
     if user_friendly_name == 'flowers - 3500 images':
-        exact_path = '../datasets/flowers/'
+        exact_path = Path('../datasets/flowers/')
     elif user_friendly_name == 'geometric figures - 9000 images':
-        exact_path = '../datasets/geo_shapes/s'
+        exact_path = Path('../datasets/geo_shapes/')
     elif user_friendly_name == 'DogBreeds - 120 classes':
-        exact_path = '../datasets/dogs/'
+        exact_path = Path('../datasets/dogs/')
     else:
-        exact_path = '../datasets/cool_ones/'
+        exact_path = Path('../datasets/cool_ones/')
 
     exact_path = os.path.abspath(exact_path)
     return exact_path
