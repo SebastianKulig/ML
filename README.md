@@ -9,6 +9,7 @@
 
 # Użyte datasety podczas testów
 * [Stanford Dogs](http://vision.stanford.edu/aditya86/ImageNetDogs/images.tar)
+* [Natural Images](https://www.kaggle.com/prasunroy/natural-images)
 
 
 # TODO - wpisujcie się do zadań które robicie, żeby nie duplikować pracy
