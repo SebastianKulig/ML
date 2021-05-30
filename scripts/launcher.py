@@ -23,7 +23,7 @@ def user_input():
         inquirer.List('model',
                       message='What model would you like to use?',
                       choices=['VGG16',
-                               'Resnet50',
+                               'ResNet50',
                                'InceptionV3'],
                       ),
     ]
