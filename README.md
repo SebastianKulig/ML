@@ -7,6 +7,9 @@
 5. ```python launcher.py```
 6. Reszta zgodnie z komunikatami z programu
 
+# Użyte datasety podczas testów
+* [Stanford Dogs](http://vision.stanford.edu/aditya86/ImageNetDogs/images.tar)
+
 
 # TODO - wpisujcie się do zadań które robicie, żeby nie duplikować pracy
 * Przygotować zestaw metryk/wskażników jakości klasteryzacji i skonsultowanie ich z doktorem [Sebastian]
