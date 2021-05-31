@@ -19,12 +19,12 @@ from tqdm import tqdm
 
 import pretty_print
 
-os.system("")
+os.system('')
 pp = pretty_print.Style()
 
 
 def begin(selected_method, selected_model, selected_dataset):
-    pp.print_red("########## {} {} {}".format(selected_method, selected_model, selected_dataset))
+    pp.print_red('########## {} {} {}'.format(selected_method, selected_model, selected_dataset))
     os.chdir(selected_dataset)
 
     pp.print_green('########## Initializing model')
@@ -218,6 +218,7 @@ def make_reachability_plot(model, data_array_length, dimension):
     plt.ylabel('Reachability (epsilon distance)')
     plt.legend(klas)
     plt.show()
+    plt.savefig('./reach.png')
 
 
 def extract_features(file, model):
@@ -233,18 +234,18 @@ def extract_features(file, model):
 def clustering_evaluation(features, labels, number_of_clusters, model, clustering_method):
     # ==================================== Silhouette ===============================
     silhouette_avg = silhouette_score(features, labels)
-    print("Number of clusters: ", number_of_clusters, " model: ", model,
-          " clustering method: ", clustering_method, ", the average silhouette_score is: ", silhouette_avg)
+    print('Number of clusters: ', number_of_clusters, ' model: ', model,
+          ' clustering method: ', clustering_method, ', the average silhouette_score is: ', silhouette_avg)
 
     # ================================ Calinski-Harabasz ============================
     calinski_harabasz = metrics.calinski_harabasz_score(features, labels)
-    print("Number of clusters: ", number_of_clusters, " model: ", model,
-          " clustering method: ", clustering_method, ", the Calinski-Harabasz score is: ", calinski_harabasz)
+    print('Number of clusters: ', number_of_clusters, ' model: ', model,
+          ' clustering method: ', clustering_method, ', the Calinski-Harabasz score is: ', calinski_harabasz)
 
     # ================================ Davies-Bouldin ===============================
     davies_bouldin = metrics.davies_bouldin_score(features, labels)
-    print("Number of clusters: ", number_of_clusters, " model: ", model,
-          " clustering method: ", clustering_method, ", the Davies-Bouldin score is: ", davies_bouldin)
+    print('Number of clusters: ', number_of_clusters, ' model: ', model,
+          ' clustering method: ', clustering_method, ', the Davies-Bouldin score is: ', davies_bouldin)
 
 
 def silhouette_for_every_sample(features, labels, number_of_clusters):
@@ -272,16 +273,17 @@ def silhouette_for_every_sample(features, labels, number_of_clusters):
         # Compute the new y_lower for next plot
         y_lower = y_upper + 10  # 10 for the 0 samples
 
-    ax1.set_title("The silhouette plot")
-    ax1.set_xlabel("The silhouette coefficient values")
-    ax1.set_ylabel("Cluster label")
+    ax1.set_title('The silhouette plot')
+    ax1.set_xlabel('The silhouette coefficient values')
+    ax1.set_ylabel('Cluster label')
 
     # The vertical line for average silhouette score of all the values
-    ax1.axvline(x=silhouette_avg, color="red", linestyle="--")
+    ax1.axvline(x=silhouette_avg, color='red', linestyle='--')
 
     ax1.set_yticks([])  # Clear the yaxis labels / ticks
     ax1.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
     plt.show()
+    plt.savefig('./silhouette.png')
 
 
 # TODO: temporary solution, tbd
