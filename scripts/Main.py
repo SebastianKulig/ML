@@ -12,30 +12,9 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_samples, silhouette_score
 
 
-
-
-def clustering_evaluation_for_kmeans(feature_list, labels_list, number_of_clusters, model):
-    # ==================================== Silhouette ===============================
-    silhouette_avg = silhouette_score(feature_list, labels_list)
-    print(" clusters: ", number_of_clusters, " model: ", model, " clustering method: kmeans, the average silhouette_score is: ", silhouette_avg)
-    silhouette_avg_table.append([model, clustering_method, number_of_clusters, silhouette_avg])
-
-    # ================================ Calinski-Harabasz ============================
-    calinski_harabasz = metrics.calinski_harabasz_score(feature_list, labels_list)
-    print(" clusters: ", number_of_clusters, " model: ", model, " clustering method: kmeans, clusters, the Calinski-Harabasz score is :", calinski_harabasz)
-
-    calinski_harabasz_table.append([model, clustering_method, number_of_clusters, calinski_harabasz])
-
-    # ================================ Davies-Bouldin ===============================
-    davies_bouldin = metrics.davies_bouldin_score(feature_list, labels_list)
-    print(" clusters: ", number_of_clusters, " model: ", model, " clustering method: kmeans, clusters, the Davies-Bouldin score is :", davies_bouldin)
-
-    davies_bouldin_table.append([model, clustering_method, number_of_clusters, davies_bouldin])
-
-
-
 def silhouette_for_every_sample(feature_list, labels_list, number_of_clusters):
     silhouette_avg = silhouette_score(feature_list, labels_list)
+
     # ================== Compute the silhouette scores for each sample ==============
     sample_silhouette_values = silhouette_samples(feature_list, labels_list)
     y_lower = 10
@@ -73,7 +52,7 @@ def silhouette_for_every_sample(feature_list, labels_list, number_of_clusters):
 
 def show_plots(table, clustering_method_name):
     # ========================================= Silhouette - plot ======================================================
-    plt.plot([i[2] for i in table], [i[3] for i in table], 'bx-')
+    plt.plot([i[1] for i in table], [i[2] for i in table], 'bx-')
     plt.xlabel('Number of clusters')
     plt.ylabel('Score')
     plt.title(clustering_method_name)
@@ -82,12 +61,12 @@ def show_plots(table, clustering_method_name):
 
 # ================================================= Settings ============================================================
 model_name = "ResNet50"
-dataset = "mini"
+dataset = ""
 clustering_method = "k-means"
 
 result_folder = "C:\\Users\\kulig\\Desktop\\ML-projekt\\results\\"
 
-max_cluster_number = 7
+max_cluster_number = 10
 
 silhouette_avg_table = []
 calinski_harabasz_table = []
@@ -111,7 +90,7 @@ elif (model_name == "VGG16"):
 if (dataset == "mini"):
     img_path = '../dataset/mini_data\\'
 else:
-    img_path = '../dataset/data/natural_images\\'
+    img_path = '../dataset/natural_images\\'
 
 # ================================================= Extract features ===================================================
 vgg16_feature_list = []
@@ -125,9 +104,7 @@ vgg16_feature_list = []
 #     vgg16_feature = model.predict(img_data)
 #     vgg16_feature_np = np.array(vgg16_feature)
 #     vgg16_feature_list.append(vgg16_feature_np.flatten())
-    # collapse a feature from the model into an one-dimension
-    # array required by kMeans in Scikit-Learn (where the input shape is [n_samples, n_features])
-    # (different pre-trained models produce different shapes of features) - VGG16 feature shape — (1L, 7L, 7L, 512L)
+
 
 vgg16_feature_list_np = np.array(vgg16_feature_list)
 
@@ -139,7 +116,6 @@ with open("C:\\Users\\kulig\\Desktop\\ML-projekt\\cechy.npy", "rb") as f:
     vgg16_feature_list_np = np.load(f)
 # ===================================================K-means=============================================================
 
-# optimal_number_of_clusters = 4
 inertia = []
 K = range(2, max_cluster_number)
 for k in K:
@@ -148,8 +124,22 @@ for k in K:
     y_kmeans = kmeanModel.fit_predict(vgg16_feature_list_np)
 
     # ================================ Check the performance of clustering =================================================
-    clustering_evaluation_for_kmeans(vgg16_feature_list_np, y_kmeans, k, model_name)
-    silhouette_for_every_sample(vgg16_feature_list_np, y_kmeans, k)
+    # ==================================== Silhouette ===============================
+    silhouette_avg = silhouette_score(vgg16_feature_list_np, y_kmeans)
+    silhouette_avg_table.append([model_name, k, silhouette_avg])
+
+    # ================================ Calinski-Harabasz ============================
+    calinski_harabasz = metrics.calinski_harabasz_score(vgg16_feature_list_np, y_kmeans)
+    calinski_harabasz_table.append([model_name, k, calinski_harabasz])
+
+    # ================================ Davies-Bouldin ===============================
+    davies_bouldin = metrics.davies_bouldin_score(vgg16_feature_list_np, y_kmeans)
+    davies_bouldin_table.append([model_name, k, davies_bouldin])
+
+
+    #silhouette_for_every_sample(vgg16_feature_list_np, y_kmeans, k)
+
+
 show_plots(silhouette_avg_table, "Silhouette")
 show_plots(calinski_harabasz_table, "Calinski-Harabasz")
 show_plots(davies_bouldin_table, "Davies-Bouldin")
@@ -162,11 +152,10 @@ plt.ylabel('Inertia')
 plt.title('Wykres łokciowy')
 plt.show()
 
+print(silhouette_avg_table)
+print(calinski_harabasz_table)
+print(davies_bouldin_table)
 
-# ============================================== Optimal number of clusters ============================================
-# kmeans = KMeans(n_clusters=optimal_number_of_clusters, random_state=0)
-# y_kmeans = kmeans.fit_predict(
-#     vgg16_feature_list_np)  # Compute cluster centers and predict cluster index for each sample
 
 # =========================================== Save results in separate folders =========================================
 
