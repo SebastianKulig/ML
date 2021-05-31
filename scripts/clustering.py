@@ -27,6 +27,13 @@ from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler, normalize
+from sklearn import metrics
+from sklearn.cluster import DBSCAN, OPTICS, KMeans
+from sklearn.metrics import silhouette_samples, silhouette_score
+from sklearn.metrics import silhouette_samples, silhouette_score
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import NearestNeighbors
+from tqdm import tqdm
 
 os.system("")
 pp = pretty_print.Style()
@@ -34,7 +41,6 @@ pp = pretty_print.Style()
 
 def begin(selected_method, selected_model, selected_dataset):
     pp.print_red("########## {} {} {}".format(selected_method, selected_model, selected_dataset))
-
     os.chdir(selected_dataset)
 
     pp.print_green('########## initializing model')
@@ -57,7 +63,7 @@ def begin(selected_method, selected_model, selected_dataset):
     pp.print_green('########## extracting features')
     start_time = time.time()
 
-    for picture in images:
+    for picture in tqdm(images):
         data[picture] = extract_features(picture, model)
 
     pp.print_green('########## extracting features done in {} seconds'.format(time.time() - start_time))
@@ -143,6 +149,12 @@ def cluster_data(feat, filenames, results_path, input_path, user_model, dims):
     #         os.mkdir(os.path.abspath('{}/{}/'.format(results_path, cluster)))
     #         copyfile(os.path.abspath('{}/{}'.format(input_path, file)),
     #                  os.path.abspath('{}/{}/{}'.format(results_path, cluster, file)))
+    
+    # Evaluation
+    number_of_clusters = len(set(method.labels_))
+    if number_of_clusters > 1:
+        clustering_evaluation(feat, method.labels_, number_of_clusters, selected_model, user_model)
+        silhouette_for_every_sample(feat, method.labels_, number_of_clusters)
 
 
 def extract_features(file, model):
@@ -180,7 +192,6 @@ def neighbors_plot(feat):
     plt.show()
 
     return distances[final_index]
-
 
 def plot_dbscan_clusters(data, model):
 
@@ -234,7 +245,72 @@ def make_reachability_plot(model, data_array_length, dimension):
     plt.legend(klas)
     plt.show()
 
+
+def extract_features(file, model):
+    img = load_img(file, target_size=(224, 224))
+    img = np.array(img)
+    reshaped_img = img.reshape(1, 224, 224, 3)
+    imgx = preprocess_input(reshaped_img)
+    features = model.predict(imgx, use_multiprocessing=True)
+
+    return features
+
+
+def clustering_evaluation(features, labels, number_of_clusters, model, clustering_method):
+    # ==================================== Silhouette ===============================
+    silhouette_avg = silhouette_score(features, labels)
+    print("Number of clusters: ", number_of_clusters, " model: ", model,
+          " clustering method: ", clustering_method, ", the average silhouette_score is: ", silhouette_avg)
+
+    # ================================ Calinski-Harabasz ============================
+    calinski_harabasz = metrics.calinski_harabasz_score(features, labels)
+    print("Number of clusters: ", number_of_clusters, " model: ", model,
+          " clustering method: ", clustering_method, ", the Calinski-Harabasz score is: ", calinski_harabasz)
+
+    # ================================ Davies-Bouldin ===============================
+    davies_bouldin = metrics.davies_bouldin_score(features, labels)
+    print("Number of clusters: ", number_of_clusters, " model: ", model,
+          " clustering method: ", clustering_method, ", the Davies-Bouldin score is: ", davies_bouldin)
+
+
+def silhouette_for_every_sample(features, labels, number_of_clusters):
+    silhouette_avg = silhouette_score(features, labels)
+    # ================== Compute the silhouette scores for each sample ==============
+    sample_silhouette_values = silhouette_samples(features, labels)
+    y_lower = 10
+    fig, ax1 = plt.subplots(1, 1)
+    fig.set_size_inches(18, 7)
+
+    for i in range(number_of_clusters):
+        ith_cluster_silhouette_values = sample_silhouette_values[labels == i]
+        ith_cluster_silhouette_values.sort()
+        size_cluster_i = ith_cluster_silhouette_values.shape[0]
+        y_upper = y_lower + size_cluster_i
+
+        color = cm.nipy_spectral(float(i) / number_of_clusters)
+        ax1.fill_betweenx(np.arange(y_lower, y_upper),
+                          0, ith_cluster_silhouette_values,
+                          facecolor=color, edgecolor=color, alpha=0.7)
+
+        # Label the silhouette plots with their cluster numbers at the middle
+        ax1.text(-0.05, y_lower + 0.5 * size_cluster_i, str(i))
+
+        # Compute the new y_lower for next plot
+        y_lower = y_upper + 10  # 10 for the 0 samples
+
+    ax1.set_title("The silhouette plot")
+    ax1.set_xlabel("The silhouette coefficient values")
+    ax1.set_ylabel("Cluster label")
+
+    # The vertical line for average silhouette score of all the values
+    ax1.axvline(x=silhouette_avg, color="red", linestyle="--")
+
+    ax1.set_yticks([])  # Clear the yaxis labels / ticks
+    ax1.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
+    plt.show()
+
 if __name__ =='__main__':
     exact_path = '..\\datasets\\geo_shapes\\'
     exact_path = os.path.abspath(exact_path)
     begin('OPTICS', 'ResNet50', exact_path)
+    
