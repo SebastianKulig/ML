@@ -1,38 +1,28 @@
+import matplotlib.cm as cm
+import matplotlib.pyplot as plt
+import numpy as np
 import os
 import pickle
+import pretty_print
 import shutil
+import sklearn
 import time
+from keras.applications.inception_v3 import InceptionV3
+from keras.applications.resnet50 import ResNet50
+from keras.applications.vgg16 import VGG16, preprocess_input
+from keras.models import Model
+from keras.preprocessing import image
+from keras.preprocessing.image import img_to_array, load_img
 from os import listdir
 from os.path import isfile, join
 from pathlib import Path
 from shutil import copyfile
-
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
-import numpy as np
-import pretty_print
-from sklearn.decomposition import PCA
-import sklearn
-from keras.applications.inception_v3 import InceptionV3
-from keras.applications.resnet50 import ResNet50
-from keras.applications.vgg16 import VGG16
-from keras.applications.vgg16 import preprocess_input
-from keras.models import Model
-from keras.models import Model
-from keras.preprocessing import image
-from keras.preprocessing.image import img_to_array
-from keras.preprocessing.image import load_img
-from sklearn.cluster import DBSCAN, OPTICS, KMeans
-from sklearn.metrics import silhouette_samples, silhouette_score
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.neighbors import NearestNeighbors
-from sklearn.preprocessing import StandardScaler, normalize
 from sklearn import metrics
 from sklearn.cluster import DBSCAN, OPTICS, KMeans
+from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_samples, silhouette_score
-from sklearn.metrics import silhouette_samples, silhouette_score
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.neighbors import NearestNeighbors
+from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
+from sklearn.preprocessing import StandardScaler, normalize
 from tqdm import tqdm
 
 os.system("")
@@ -149,7 +139,7 @@ def cluster_data(feat, filenames, results_path, input_path, user_model, dims):
     #         os.mkdir(os.path.abspath('{}/{}/'.format(results_path, cluster)))
     #         copyfile(os.path.abspath('{}/{}'.format(input_path, file)),
     #                  os.path.abspath('{}/{}/{}'.format(results_path, cluster, file)))
-    
+
     # Evaluation
     number_of_clusters = len(set(method.labels_))
     if number_of_clusters > 1:
@@ -173,8 +163,8 @@ def neighbors_plot(feat):
     distances, indices = neighbors.kneighbors(feat)
     distances = np.sort(distances, axis=0)
     distances = distances[:, 1]
-    derivative_dist = np.gradient(distances) / (1/len(distances))
-    half_index = int(len(derivative_dist)/2)
+    derivative_dist = np.gradient(distances) / (1 / len(distances))
+    half_index = int(len(derivative_dist) / 2)
     border = np.percentile(derivative_dist, 95)
     item = np.where(derivative_dist > border)[0]
     try:
@@ -193,8 +183,8 @@ def neighbors_plot(feat):
 
     return distances[final_index]
 
-def plot_dbscan_clusters(data, model):
 
+def plot_dbscan_clusters(data, model):
     pca = PCA(n_components=2)
     pca.fit(data)
     data_PCA = pca.transform(data)
@@ -225,7 +215,6 @@ def plot_dbscan_clusters(data, model):
 
 
 def make_reachability_plot(model, data_array_length, dimension):
-
     space = np.arange(data_array_length)
     reachability = model.reachability_[model.ordering_]
     labels = model.labels_[model.ordering_]
@@ -309,8 +298,8 @@ def silhouette_for_every_sample(features, labels, number_of_clusters):
     ax1.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
     plt.show()
 
-if __name__ =='__main__':
+
+if __name__ == '__main__':
     exact_path = '..\\datasets\\geo_shapes\\'
     exact_path = os.path.abspath(exact_path)
     begin('OPTICS', 'ResNet50', exact_path)
-    
