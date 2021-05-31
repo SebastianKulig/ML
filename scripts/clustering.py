@@ -1,5 +1,4 @@
 import os
-
 import pickle
 import shutil
 import time
@@ -22,12 +21,13 @@ from keras.models import Model
 from keras.preprocessing import image
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import load_img
+from sklearn import metrics
 from sklearn.cluster import DBSCAN, OPTICS, KMeans
+from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neighbors import NearestNeighbors
-from sklearn.metrics import silhouette_samples, silhouette_score
-from sklearn import metrics
+from tqdm import tqdm
 
 os.system("")
 pp = pretty_print.Style()
@@ -56,7 +56,7 @@ def begin(selected_method, selected_model, selected_dataset):
     pp.print_green('########## extracting features')
     start_time = time.time()
 
-    for picture in images:
+    for picture in tqdm(images):
         data[picture] = extract_features(picture, model)
 
     pp.print_green('########## extracting features done in {} seconds'.format(time.time() - start_time))
@@ -145,17 +145,17 @@ def clustering_evaluation(features, labels, number_of_clusters, model, clusterin
     # ==================================== Silhouette ===============================
     silhouette_avg = silhouette_score(features, labels)
     print("Number of clusters: ", number_of_clusters, " model: ", model,
-          " clustering method: ", clustering_method,", the average silhouette_score is: ", silhouette_avg)
+          " clustering method: ", clustering_method, ", the average silhouette_score is: ", silhouette_avg)
 
     # ================================ Calinski-Harabasz ============================
     calinski_harabasz = metrics.calinski_harabasz_score(features, labels)
     print("Number of clusters: ", number_of_clusters, " model: ", model,
-          " clustering method: ", clustering_method,", the Calinski-Harabasz score is :", calinski_harabasz)
+          " clustering method: ", clustering_method, ", the Calinski-Harabasz score is: ", calinski_harabasz)
 
     # ================================ Davies-Bouldin ===============================
     davies_bouldin = metrics.davies_bouldin_score(features, labels)
     print("Number of clusters: ", number_of_clusters, " model: ", model,
-          " clustering method: ", clustering_method,", the Davies-Bouldin score is :", davies_bouldin)
+          " clustering method: ", clustering_method, ", the Davies-Bouldin score is: ", davies_bouldin)
 
 
 def silhouette_for_every_sample(features, labels, number_of_clusters):
