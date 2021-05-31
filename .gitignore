@@ -1,9 +1,5 @@
 # Chudy additions
 scripts/__pycache__/
-datasets/flowers/*
-datasets/dogs/*
-datasets/cool_ones/*
-datasets/geo_shapes/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
