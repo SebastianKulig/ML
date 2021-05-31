@@ -14,6 +14,7 @@
 * [Flowers Dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/1ECTVN)
 
 
+
 # TODO - wpisujcie się do zadań które robicie, żeby nie duplikować pracy
 * Przygotować zestaw metryk/wskażników jakości klasteryzacji i skonsultowanie ich z doktorem [Sebastian]
 * Przygotować klasteryzację za pomocą kNN
