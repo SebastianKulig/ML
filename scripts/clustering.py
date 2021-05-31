@@ -1,5 +1,6 @@
 import os
 import time
+from shutil import copyfile
 
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
@@ -26,12 +27,12 @@ def begin(selected_method, selected_model, selected_dataset):
     pp.print_red("########## {} {} {}".format(selected_method, selected_model, selected_dataset))
     os.chdir(selected_dataset)
 
-    pp.print_green('########## initializing model')
+    pp.print_green('########## Initializing model')
     model = initialize_model(selected_model)
 
     images = []
 
-    pp.print_green('########## reading dataset')
+    pp.print_blue('########## Reading dataset')
     start_time = time.time()
 
     with os.scandir(selected_dataset) as files:
@@ -39,50 +40,50 @@ def begin(selected_method, selected_model, selected_dataset):
             if file.name.endswith('.png') or file.name.endswith('.jpg'):
                 images.append(file.name)
 
-    pp.print_green('########## reading dataset done in {} seconds'.format(time.time() - start_time))
+    pp.print_cyan('########## Reading dataset done in {} seconds'.format(time.time() - start_time))
 
     data = {}
 
-    pp.print_green('########## extracting features')
+    pp.print_magenta('########## Extracting features')
     start_time = time.time()
 
     for picture in tqdm(images):
         data[picture] = extract_features(picture, model)
 
-    pp.print_green('########## extracting features done in {} seconds'.format(time.time() - start_time))
+    pp.print_yellow('########## Extracting features done in {} seconds'.format(time.time() - start_time))
 
     filenames = np.array(list(data.keys()))
 
     features = np.array(list(data.values()))
     features_dimension = features.ndim
 
-    pp.print_green('########## reshaping')
+    pp.print_magenta('########## Reshaping')
     features = np.reshape(features, (features.shape[0], np.prod(features.shape[1:])))
 
-    pp.print_green('########## normalizing')
+    pp.print_cyan('########## Normalizing')
     scaler = StandardScaler()
     features = scaler.fit_transform(features)
     features = normalize(features)
 
-    pp.print_green('########## pca to 95% variance')
+    pp.print_blue('########## PCA to 95% variance')
     pca = PCA(n_components=0.95, svd_solver='full')
     pca.fit(features)
     features = pca.transform(features)
-    pp.print_green('########## pca to 95% variance done')
+    pp.print_yellow('########## PCA to 95% variance done')
 
     out_path = '../../results/{}/'.format(selected_model)
-    pp.print_green('########## clustering')
+    pp.print_green('########## Clustering')
     start_time = time.time()
 
     cluster_data(features, filenames, out_path, selected_dataset, selected_model, selected_method, features_dimension)
 
-    pp.print_green('########## clustering done in {} seconds'.format(time.time() - start_time))
+    pp.print_red('########## Clustering done in {} seconds'.format(time.time() - start_time))
 
 
 def initialize_model(model_type):
     if model_type == 'VGG16':
         model = VGG16(weights='imagenet', include_top=False)
-    elif model_type == 'Resnet50':
+    elif model_type == 'ResNet50':
         model = ResNet50(weights='imagenet', include_top=False)
     else:
         model = InceptionV3(weights='imagenet', include_top=False)
@@ -92,7 +93,7 @@ def initialize_model(model_type):
 
 def cluster_data(feat, filenames, results_path, input_path, user_model, user_method, dims):
     if user_method == 'DBSCAN':
-        pp.print_green('########## calculating neighbors')
+        pp.print_green('########## Calculating neighbors')
         eps = neighbors_plot(feat)
         method = DBSCAN(eps=eps, min_samples=(dims * 2), algorithm='auto', metric='minkowski', p=2, n_jobs=-1)
     elif user_method == 'k-means':
@@ -109,30 +110,31 @@ def cluster_data(feat, filenames, results_path, input_path, user_model, user_met
         # method.fit(feat, dane_treningowe)
         pass
     else:
-        pp.print_green('########## .fit(data)')
+        pp.print_blue('########## Fitting')
         method.fit(feat)
         if user_method == 'DBSCAN':
             plot_dbscan_clusters(feat, method)
         if user_method == 'OPTICS':
             make_reachability_plot(method, len(feat), 10)
 
-    pp.print_green('########## saving results to {}'.format(os.path.abspath('{}/'.format(results_path))))
-    # groups = {}
-    # for file, cluster in zip(filenames, method.labels_):
-    #     if cluster not in groups.keys():
-    #         groups[cluster] = []
-    #         groups[cluster].append(file)
-    #     else:
-    #         groups[cluster].append(file)
-    #
-    #     try:
-    #         copyfile(os.path.abspath('{}/{}'.format(input_path, file)),
-    #                  os.path.abspath('{}/{}/{}'.format(results_path, cluster, file)))
-    #     except FileNotFoundError:
-    #         os.mkdir(os.path.abspath('{}/{}/'.format(results_path, cluster)))
-    #         copyfile(os.path.abspath('{}/{}'.format(input_path, file)),
-    #                  os.path.abspath('{}/{}/{}'.format(results_path, cluster, file)))
+    pp.print_cyan('########## Saving results to {}'.format(os.path.abspath('{}/'.format(results_path))))
+    groups = {}
+    for file, cluster in zip(filenames, method.labels_):
+        if cluster not in groups.keys():
+            groups[cluster] = []
+            groups[cluster].append(file)
+        else:
+            groups[cluster].append(file)
 
+        try:
+            copyfile(os.path.abspath('{}/{}'.format(input_path, file)),
+                     os.path.abspath('{}/{}/{}'.format(results_path, cluster, file)))
+        except FileNotFoundError:
+            os.mkdir(os.path.abspath('{}/{}/'.format(results_path, cluster)))
+            copyfile(os.path.abspath('{}/{}'.format(input_path, file)),
+                     os.path.abspath('{}/{}/{}'.format(results_path, cluster, file)))
+
+    pp.print_magenta('########## Evaluating the clustering')
     # Evaluation
     number_of_clusters = len(set(method.labels_))
     if number_of_clusters > 1:
@@ -282,6 +284,7 @@ def silhouette_for_every_sample(features, labels, number_of_clusters):
     plt.show()
 
 
+# TODO: temporary solution, tbd
 if __name__ == '__main__':
     exact_path = os.path.abspath('../datasets/geo_shapes/')
     begin('OPTICS', 'ResNet50', exact_path)

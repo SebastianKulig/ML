@@ -1,11 +1,11 @@
 # Chudy additions
 scripts/__pycache__/
 datasets/flowers/*
-datasets/dogs/*
-datasets/cool_ones/*
+datasets/dog_breeds/*
+datasets/natural_images/*
 datasets/geo_shapes/*
 results/InceptionV3/*
-results/Resnet50/*
+results/ResNet50/*
 results/VGG16/*
 
 # Byte-compiled / optimized / DLL files
