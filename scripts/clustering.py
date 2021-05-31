@@ -283,10 +283,3 @@ def silhouette_for_every_sample(features, labels, number_of_clusters):
     ax1.set_yticks([])  # Clear the yaxis labels / ticks
     ax1.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
     plt.show()
-
-
-
-# TODO: temporary solution, tbd
-if __name__ == '__main__':
-    exact_path = os.path.abspath('../datasets/geo_shapes/')
-    begin('OPTICS', 'ResNet50', exact_path)
