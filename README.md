@@ -10,6 +10,8 @@
 # Użyte datasety podczas testów
 * [Stanford Dogs](http://vision.stanford.edu/aditya86/ImageNetDogs/images.tar)
 * [Natural Images](https://www.kaggle.com/prasunroy/natural-images)
+* [2D geometric shapes dataset](https://data.mendeley.com/datasets/wzr2yv7r53/1)
+* [Flowers Dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/1ECTVN)
 
 
 # TODO - wpisujcie się do zadań które robicie, żeby nie duplikować pracy
