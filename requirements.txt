@@ -1,6 +1,7 @@
+inquirer~=2.7.0
 matplotlib~=3.3.4
 numpy~=1.19.5
-Keras~=2.4.3
 sklearn~=0.0
 scikit-learn~=0.24.1
-inquirer~=2.7.0
+Keras~=2.4.3
+tqdm~=4.60.0

@@ -1,22 +1,13 @@
+import os
+import time
+
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
-import os
-import pickle
-import pretty_print
-import shutil
-import sklearn
-import time
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.resnet50 import ResNet50
 from keras.applications.vgg16 import VGG16, preprocess_input
-from keras.models import Model
-from keras.preprocessing import image
-from keras.preprocessing.image import img_to_array, load_img
-from os import listdir
-from os.path import isfile, join
-from pathlib import Path
-from shutil import copyfile
+from keras.preprocessing.image import load_img
 from sklearn import metrics
 from sklearn.cluster import DBSCAN, OPTICS, KMeans
 from sklearn.decomposition import PCA
@@ -24,6 +15,8 @@ from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
 from sklearn.preprocessing import StandardScaler, normalize
 from tqdm import tqdm
+
+import pretty_print
 
 os.system("")
 pp = pretty_print.Style()
@@ -81,7 +74,7 @@ def begin(selected_method, selected_model, selected_dataset):
     pp.print_green('########## clustering')
     start_time = time.time()
 
-    cluster_data(features, filenames, out_path, selected_dataset, selected_method, features_dimension)
+    cluster_data(features, filenames, out_path, selected_dataset, selected_model, selected_method, features_dimension)
 
     pp.print_green('########## clustering done in {} seconds'.format(time.time() - start_time))
 
@@ -97,30 +90,30 @@ def initialize_model(model_type):
     return model
 
 
-def cluster_data(feat, filenames, results_path, input_path, user_model, dims):
-    if user_model == 'DBSCAN':
+def cluster_data(feat, filenames, results_path, input_path, user_model, user_method, dims):
+    if user_method == 'DBSCAN':
         pp.print_green('########## calculating neighbors')
         eps = neighbors_plot(feat)
         method = DBSCAN(eps=eps, min_samples=(dims * 2), algorithm='auto', metric='minkowski', p=2, n_jobs=-1)
-    elif user_model == 'k-means':
+    elif user_method == 'k-means':
         n_clusters = int(input('number of clusters: '))
         random_state = int(input('random state: '))
         method = KMeans(n_clusters=n_clusters, n_jobs=-1, random_state=random_state)
-    elif user_model == 'knn':
+    elif user_method == 'knn':
         method = KNeighborsClassifier(n_neighbors=5)
     else:
         final_xi = 0.004
         method = OPTICS(min_samples=10, n_jobs=-1, cluster_method='xi', xi=final_xi)
 
-    if user_model == 'knn':
+    if user_method == 'knn':
         # method.fit(feat, dane_treningowe)
         pass
     else:
         pp.print_green('########## .fit(data)')
         method.fit(feat)
-        if user_model == 'DBSCAN':
+        if user_method == 'DBSCAN':
             plot_dbscan_clusters(feat, method)
-        if user_model == 'OPTICS':
+        if user_method == 'OPTICS':
             make_reachability_plot(method, len(feat), 10)
 
     pp.print_green('########## saving results to {}'.format(os.path.abspath('{}/'.format(results_path))))
@@ -143,18 +136,8 @@ def cluster_data(feat, filenames, results_path, input_path, user_model, dims):
     # Evaluation
     number_of_clusters = len(set(method.labels_))
     if number_of_clusters > 1:
-        clustering_evaluation(feat, method.labels_, number_of_clusters, selected_model, user_model)
+        clustering_evaluation(feat, method.labels_, number_of_clusters, user_model, user_method)
         silhouette_for_every_sample(feat, method.labels_, number_of_clusters)
-
-
-def extract_features(file, model):
-    img = load_img(file, target_size=(224, 224))
-    img = np.array(img)
-    reshaped_img = img.reshape(1, 224, 224, 3)
-    imgx = preprocess_input(reshaped_img)
-    features = model.predict(imgx, use_multiprocessing=True)
-
-    return features
 
 
 def neighbors_plot(feat):
@@ -187,11 +170,11 @@ def neighbors_plot(feat):
 def plot_dbscan_clusters(data, model):
     pca = PCA(n_components=2)
     pca.fit(data)
-    data_PCA = pca.transform(data)
+    data_pca = pca.transform(data)
 
     labels = model.labels_
 
-    n_clusters_ = len(labels) - (1 if -1 in labels else 0)
+    # n_clusters_ = len(labels) - (1 if -1 in labels else 0)
     unique_labels = set(labels)
     core_samples_mask = np.zeros_like(labels, dtype=bool)
     core_samples_mask[model.core_sample_indices_] = True
@@ -204,10 +187,10 @@ def plot_dbscan_clusters(data, model):
 
         class_member_mask = (labels == k)
 
-        xy = data_PCA[class_member_mask & core_samples_mask]
+        xy = data_pca[class_member_mask & core_samples_mask]
         plt.plot(xy[:, 0], xy[:, 1], '*', color=tuple(col))
 
-        xy = data_PCA[class_member_mask & ~core_samples_mask]
+        xy = data_pca[class_member_mask & ~core_samples_mask]
         plt.plot(xy[:, 0], xy[:, 1], '.', color=tuple(col))
 
     plt.title('Clusters, star means core point, black = not clustered')
@@ -300,6 +283,5 @@ def silhouette_for_every_sample(features, labels, number_of_clusters):
 
 
 if __name__ == '__main__':
-    exact_path = '..\\datasets\\geo_shapes\\'
-    exact_path = os.path.abspath(exact_path)
+    exact_path = os.path.abspath('../datasets/geo_shapes/')
     begin('OPTICS', 'ResNet50', exact_path)

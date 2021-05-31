@@ -1,8 +1,9 @@
 import os
 from pathlib import Path
 
-import clustering
 import inquirer
+
+import clustering
 
 
 def user_input():
