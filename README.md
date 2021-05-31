@@ -12,14 +12,3 @@
 * [Natural Images](https://www.kaggle.com/prasunroy/natural-images)
 * [2D geometric shapes dataset](https://data.mendeley.com/datasets/wzr2yv7r53/1)
 * [Flowers Dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/1ECTVN)
-
-
-
-# TODO - wpisujcie się do zadań które robicie, żeby nie duplikować pracy
-* Przygotować zestaw metryk/wskażników jakości klasteryzacji i skonsultowanie ich z doktorem [Sebastian]
-* Przygotować klasteryzację za pomocą kNN
-* Przygotować klasteryzacje za pomocą jakiejś innej metody np DBSCAN [Wnek]
-* Przetestować wszystkie możliwości połączenia dataset + model + metoda klasteryzacji [Wnek]
-* Przygotować raport z wykonanych prac [Seba, Arek, Karol]
-* Przygotować końcową aplikację z możliwością wyboru wyżej wymienionych 3 parametrów [Wnek]
-
