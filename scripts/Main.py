@@ -61,7 +61,6 @@ def show_plots(table, clustering_method_name):
 
 # ================================================= Settings ============================================================
 model_name = "ResNet50"
-dataset = ""
 clustering_method = "k-means"
 
 result_folder = "C:\\Users\\kulig\\Desktop\\ML-projekt\\results\\"
@@ -87,33 +86,24 @@ elif (model_name == "VGG16"):
     model = model_VGG16
 
 # ================================================== Choose Dataset =====================================================
-if (dataset == "mini"):
-    img_path = '../dataset/mini_data\\'
-else:
-    img_path = '../dataset/natural_images\\'
+img_path = '../dataset/natural_images\\'
 
 # ================================================= Extract features ===================================================
 vgg16_feature_list = []
-# for fname in os.listdir(img_path):
-#     img_path_full = img_path + fname
-#     img = image.load_img(img_path_full, target_size=(224, 224))
-#     img_data = image.img_to_array(img)
-#     img_data = np.expand_dims(img_data, axis=0)
-#     img_data = preprocess_input(img_data)
-#
-#     vgg16_feature = model.predict(img_data)
-#     vgg16_feature_np = np.array(vgg16_feature)
-#     vgg16_feature_list.append(vgg16_feature_np.flatten())
+for fname in os.listdir(img_path):
+    img_path_full = img_path + fname
+    img = image.load_img(img_path_full, target_size=(224, 224))
+    img_data = image.img_to_array(img)
+    img_data = np.expand_dims(img_data, axis=0)
+    img_data = preprocess_input(img_data)
+
+    vgg16_feature = model.predict(img_data)
+    vgg16_feature_np = np.array(vgg16_feature)
+    vgg16_feature_list.append(vgg16_feature_np.flatten())
 
 
 vgg16_feature_list_np = np.array(vgg16_feature_list)
 
-# =============================== temporary ==================================
-# with open("../cechy.npy", "wb") as f:
-#     np.save(f, vgg16_feature_list_np)
-
-with open("C:\\Users\\kulig\\Desktop\\ML-projekt\\cechy.npy", "rb") as f:
-    vgg16_feature_list_np = np.load(f)
 # ===================================================K-means=============================================================
 
 inertia = []
