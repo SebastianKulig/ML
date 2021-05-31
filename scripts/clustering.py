@@ -218,7 +218,7 @@ def make_reachability_plot(model, data_array_length, dimension):
     plt.ylabel('Reachability (epsilon distance)')
     plt.legend(klas)
     plt.show()
-    plt.savefig('./reach.png')
+
 
 
 def extract_features(file, model):
@@ -283,7 +283,7 @@ def silhouette_for_every_sample(features, labels, number_of_clusters):
     ax1.set_yticks([])  # Clear the yaxis labels / ticks
     ax1.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
     plt.show()
-    plt.savefig('./silhouette.png')
+
 
 
 # TODO: temporary solution, tbd
